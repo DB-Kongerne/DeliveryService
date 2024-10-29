@@ -1,60 +1,48 @@
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
-public class DeliveryService : BackgroundService
+[ApiController]
+[Route("api/[controller]")]
+public class DeliveryController : ControllerBase
 {
-    private readonly ILogger<DeliveryService> _logger;
+    private readonly ILogger<DeliveryController> _logger;
+    private readonly IModel _channel;
 
-    public DeliveryService(ILogger<DeliveryService> logger)
+    public DeliveryController(ILogger<DeliveryController> logger, IModel channel)
     {
         _logger = logger;
+        _channel = channel;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    [HttpGet]
+    public IActionResult Get()
     {
-        var factory = new ConnectionFactory() { HostName = "localhost" }; // RabbitMQ
-        using var connection = factory.CreateConnection();
-        using var channel = connection.CreateModel();
+        var consumer = new EventingBasicConsumer(_channel);
+        var shippingRequests = new List<ShipmentDelivery>();
 
-        channel.QueueDeclare(queue: "shipping_requests",
-                             durable: false,
-                             exclusive: false,
-                             autoDelete: false,
-                             arguments: null);
-
-        var consumer = new EventingBasicConsumer(channel);
         consumer.Received += (model, ea) =>
         {
             var body = ea.Body.ToArray();
             var json = Encoding.UTF8.GetString(body);
-            var shippingRequest = JsonSerializer.Deserialize<ShippingRequest>(json);
+            var shipmentDelivery = JsonSerializer.Deserialize<ShipmentDelivery>(json);
 
-            // Process the shipping request and save it to CSV
-            SaveToCsv(shippingRequest);
+            if (shipmentDelivery != null)
+            {
+                shippingRequests.Add(shipmentDelivery);
+                _logger.LogInformation("Received shipment delivery: {MedlemsNavn}, {PickupAdresse}, {PakkeId}, {AfleveringsAdresse}",
+                                        shipmentDelivery.MedlemsNavn,
+                                        shipmentDelivery.PickupAdresse,
+                                        shipmentDelivery.PakkeId,
+                                        shipmentDelivery.AfleveringsAdresse);
+            }
         };
-        
-        channel.BasicConsume(queue: "shipping_requests",
-                             autoAck: true,
-                             consumer: consumer);
 
-        return Task.CompletedTask;
-    }
+        _channel.BasicConsume(queue: "shipping_requests", autoAck: true, consumer: consumer);
 
-    private void SaveToCsv(ShippingRequest shippingRequest)
-    {
-        var csvPath = "deliveries.csv"; // Specify your CSV path here
-        using (var writer = new StreamWriter(csvPath, true))
-        {
-            var line = $"{shippingRequest.AfsenderAdresse},{shippingRequest.ModtagerAdresse},{shippingRequest.PakkeVægt},{DateTime.UtcNow}";
-            writer.WriteLine(line);
-        }
-
-        _logger.LogInformation("Shipping request saved to CSV: {Afsender}, {Modtager}, {Vægt}", 
-                                shippingRequest.AfsenderAdresse, 
-                                shippingRequest.ModtagerAdresse, 
-                                shippingRequest.PakkeVægt);
+        // Return the list of shipping requests received (you might want to store these messages somewhere)
+        return Ok(shippingRequests);
     }
 }

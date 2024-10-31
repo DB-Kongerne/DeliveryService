@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "AHYiTG5dScdCzvViyM02cCSYtLawQ49fH/CO80zBMt8eJr7j/gm2mreblRCKDsvthNzCO+8g56F4kU7DGFO3rQ==",
+  "dgSpecHash": "rA4Lxbll76pebsWYZuzLBtZgrkT1LUZtHlz7roHQIVu9CtgWsX97j0UqWFPZd4k/Nwc5942pDh1hjyVZOK713g==",
   "success": true,
   "projectFilePath": "/Users/Mel/4sem/HaaVSoftware/DeliveryService/DeliveryService.csproj",
   "expectedPackageFiles": [
@@ -16,10 +16,13 @@
     "/Users/Mel/.nuget/packages/nlog/5.3.4/nlog.5.3.4.nupkg.sha512",
     "/Users/Mel/.nuget/packages/nlog.extensions.logging/5.3.13/nlog.extensions.logging.5.3.13.nupkg.sha512",
     "/Users/Mel/.nuget/packages/nlog.web.aspnetcore/5.3.14/nlog.web.aspnetcore.5.3.14.nupkg.sha512",
+    "/Users/Mel/.nuget/packages/rabbitmq.client/6.8.1/rabbitmq.client.6.8.1.nupkg.sha512",
     "/Users/Mel/.nuget/packages/swashbuckle.aspnetcore/6.4.0/swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "/Users/Mel/.nuget/packages/swashbuckle.aspnetcore.swagger/6.4.0/swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
     "/Users/Mel/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.4.0/swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
-    "/Users/Mel/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.4.0/swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+    "/Users/Mel/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.4.0/swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512",
+    "/Users/Mel/.nuget/packages/system.memory/4.5.5/system.memory.4.5.5.nupkg.sha512",
+    "/Users/Mel/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }

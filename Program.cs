@@ -1,25 +1,28 @@
-using NLog;
-using NLog.Web;
-
-var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings()
-.GetCurrentClassLogger();
-logger.Debug("init main");
+using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client; // Ensure this is included
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Logging.ClearProviders();
-builder.Host.UseNLog();
+// RabbitMQ setup
+builder.Services.AddSingleton<IConnection>(sp =>
+{
+    var factory = new ConnectionFactory() { HostName = "localhost" };
+    return factory.CreateConnection();
+});
+
+builder.Services.AddSingleton<IModel>(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>();
+    return connection.CreateModel();
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -27,9 +30,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

@@ -8,13 +8,16 @@ using System.Text.Json;
 [Route("api/[controller]")]
 public class DeliveryController : ControllerBase
 {
+    private readonly string _Deliverys;
     private readonly ILogger<DeliveryController> _logger;
     private readonly IModel _channel;
 
-    public DeliveryController(ILogger<DeliveryController> logger, IModel channel)
+       
+    public DeliveryController(ILogger<DeliveryController> logger, IModel channel, IConfiguration configuration)
     {
         _logger = logger;
         _channel = channel;
+        _Deliverys = configuration["Deliverys"] ?? string.Empty; // Hent miljøvariabel
     }
 
     [HttpGet]
